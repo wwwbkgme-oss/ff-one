@@ -1,11 +1,18 @@
 [package]
-name="core"
-version.workspace=true
-edition.workspace=true
-license.workspace=true
+name        = "core"
+description = "ForgeFabrik foundation — errors, trait contracts, and world events."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# BKG rule: foundation kennt keine höheren Layer.
+# core darf nur foundation/types und externe Bibliotheken importieren.
 [dependencies]
-types={workspace=true}
-serde={workspace=true}
-thiserror={workspace=true}
-async-trait={workspace=true}
-tokio={workspace=true}
+types       = { workspace = true }
+serde       = { workspace = true }
+serde_json  = { workspace = true }
+uuid        = { workspace = true }
+tokio       = { workspace = true }
+async-trait = { workspace = true }
+thiserror   = { workspace = true }
+chrono      = { workspace = true }
