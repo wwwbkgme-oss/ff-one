@@ -1,8 +1,19 @@
 [package]
-name="drivers"
-version.workspace=true
-edition.workspace=true
-license.workspace=true
+name        = "drivers"
+description = "ForgeFabrik runtime — Claude, OpenAI-compatible, and Mock AgentDriver implementations."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# BKG runtime: I/O erlaubt (HTTP), Fachlogik verboten.
 [dependencies]
-types={workspace=true}
-contracts={workspace=true}
+types      = { workspace = true }
+agents     = { workspace = true }
+contracts  = { workspace = true }
+serde      = { workspace = true }
+serde_json = { workspace = true }
+uuid       = { workspace = true }
+tokio      = { workspace = true }
+reqwest    = { workspace = true }
+async-trait = { workspace = true }
+tracing    = { workspace = true }
