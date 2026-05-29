@@ -1,8 +1,15 @@
 [package]
-name="quests"
-version.workspace=true
-edition.workspace=true
-license.workspace=true
+name        = "quests"
+description = "ForgeFabrik domain — quest generation and lifecycle management."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
 [dependencies]
-types={workspace=true}
-contracts={workspace=true}
+types      = { workspace = true }
+contracts  = { workspace = true }
+serde      = { workspace = true }
+uuid       = { workspace = true }
+chrono     = { workspace = true }
+tokio      = { workspace = true }
+async-trait = { workspace = true }
+tracing    = { workspace = true }

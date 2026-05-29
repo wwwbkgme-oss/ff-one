@@ -1,8 +1,16 @@
 [package]
-name="economy"
-version.workspace=true
-edition.workspace=true
-license.workspace=true
+name        = "economy"
+description = "ForgeFabrik domain — market listings, auctions, and wallets."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
 [dependencies]
-types={workspace=true}
-contracts={workspace=true}
+types      = { workspace = true }
+contracts  = { workspace = true }
+serde      = { workspace = true }
+uuid       = { workspace = true }
+chrono     = { workspace = true }
+tokio      = { workspace = true }
+async-trait = { workspace = true }
+tracing    = { workspace = true }
+thiserror  = { workspace = true }

@@ -1,8 +1,16 @@
 [package]
-name="security"
-version.workspace=true
-edition.workspace=true
-license.workspace=true
+name        = "security"
+description = "ForgeFabrik domain — static code analysis and safety decisions."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
 [dependencies]
-types={workspace=true}
-contracts={workspace=true}
+types      = { workspace = true }
+contracts  = { workspace = true }
+serde      = { workspace = true }
+uuid       = { workspace = true }
+chrono     = { workspace = true }
+regex      = { workspace = true }
+tokio      = { workspace = true }
+async-trait = { workspace = true }
+tracing    = { workspace = true }
