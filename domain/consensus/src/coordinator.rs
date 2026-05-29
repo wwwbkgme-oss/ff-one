@@ -56,6 +56,7 @@ impl ConsensusCoordinator for ConsensusStore {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use types::consensus::ConsensusResult;
 
     #[tokio::test]
     async fn unanimous_two_witnesses() {
