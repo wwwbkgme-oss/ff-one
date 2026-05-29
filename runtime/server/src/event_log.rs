@@ -124,4 +124,15 @@ impl EventLog {
 
     /// Gibt den Pfad des Logs zurück.
     pub fn path(&self) -> &PathBuf { &self.path }
+
+    /// No-op-Fallback wenn die Disk nicht beschreibbar ist.
+    /// Logs werden nur in Tracing ausgegeben, nicht persistiert.
+    pub fn open_noop() -> Self {
+        let path = PathBuf::from("/dev/null");
+        let file = OpenOptions::new()
+            .write(true)
+            .open("/dev/null")
+            .expect("/dev/null immer vorhanden");
+        Self { file: Mutex::new(file), path }
+    }
 }
