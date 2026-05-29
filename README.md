@@ -74,6 +74,7 @@ Domain kennt nur Foundation. Foundation kennt niemanden über sich.
 | `plugin-world` | Reality — Voxel-Weltsimulation |
 | `plugin-gm` | GameMaster — Quest-Generierung |
 | `plugin-economy` | Economy — Ressourcen-Wirtschaft |
+| `plugin-free-llm` | FreeLLM — kostenlose LLM-Provider (Groq, SambaNova, Ollama, OpenRouter, Cerebras) |
 
 ---
 
@@ -108,6 +109,27 @@ cargo run -p cli -- status
 cargo run -p cli -- watch
 ```
 
+### Kostenlos starten — kein API-Key nötig
+
+```bash
+# Ollama lokal installieren: https://ollama.com
+ollama pull llama3.2
+
+# Server starten
+cargo run -p cli -- serve --seed 42 --port 8080
+
+# Ollama-Agent spawnen
+cargo run -p cli -- spawn --name "FreeBot" --kind ollama
+```
+
+Mit kostenlosem Groq-Key ([console.groq.com](https://console.groq.com)):
+
+```bash
+export GROQ_API_KEY=gsk_...
+cargo run -p cli -- serve --seed 42
+cargo run -p cli -- spawn --name "GroqBot" --kind groq
+```
+
 ---
 
 ## REST API
@@ -134,12 +156,27 @@ GET  /economy/market                  Markt-Listings und Auktionen
 
 ### Unterstützte Agent-Typen (`kind`)
 
-| Wert | Backend |
-|---|---|
-| `claude` | Anthropic Claude (Standard) |
-| `opencode` | OpenAI-kompatibel (gpt-4o) |
-| `codex` | OpenAI Codex |
-| `amp` | Amp |
+**Kostenpflichtige Backends** (API-Key erforderlich):
+
+| Wert | Backend | Env-Var |
+|---|---|---|
+| `claude` | Anthropic Claude (Standard) | `ANTHROPIC_API_KEY` |
+| `opencode` | OpenAI-kompatibel (gpt-4o) | `OPENAI_API_KEY` |
+| `codex` | OpenAI Codex | `OPENAI_API_KEY` |
+| `amp` | Amp | — |
+
+**Kostenlose Backends** (kein Zahlungsmittel nötig):
+
+| Wert | Backend | Env-Var | Kostenloser Tier |
+|---|---|---|---|
+| `groq` | Groq Cloud | `GROQ_API_KEY` | Llama 3.1 8B Instant, Gemma 2 9B |
+| `cerebras` | Cerebras | `CEREBRAS_API_KEY` | Llama 3.1/3.3, ultra-schnell |
+| `sambanova` | SambaNova Cloud | `SAMBANOVA_API_KEY` | Llama 3.3 70B, DeepSeek V3 |
+| `openrouter` | OpenRouter | `OPENROUTER_API_KEY` | Viele `:free`-Modelle |
+| `ollama` | Ollama (lokal) | — | Beliebige lokal gezogene Modelle |
+
+> API-Keys direkt als Env-Var setzen oder in einer `.env`-Datei ablegen.
+> Ollama braucht keine Credentials — einfach `ollama pull llama3.2` lokal ausführen.
 
 ---
 
