@@ -43,8 +43,9 @@ impl std::fmt::Display for AgentKind {
 }
 
 /// Lifecycle phase of an agent.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum AgentState {
+    #[default]
     Idle,
     Active {
         current_task: String,
@@ -57,12 +58,6 @@ pub enum AgentState {
     Dead {
         reason: String,
     },
-}
-
-impl Default for AgentState {
-    fn default() -> Self {
-        Self::Idle
-    }
 }
 
 /// Permissions an agent has been granted.

@@ -7,7 +7,7 @@ fn init(_: *const FfPluginCtx) -> i32 {
     0
 }
 fn tick(t: u64) -> i32 {
-    if t % 200 == 0 {
+    if t.is_multiple_of(200) {
         debug!(plugin = "plugin-world", tick = t, "tick");
     }
     0

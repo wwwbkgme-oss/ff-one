@@ -53,7 +53,7 @@ impl GreedyMesher {
             1 => (1, 0, 2),
             _ => (2, 0, 1),
         };
-        let positive = face % 2 == 0;
+        let positive = face.is_multiple_of(2);
         let mut quads = Vec::new();
 
         for d in 0..cs {
@@ -93,6 +93,7 @@ impl GreedyMesher {
         quads
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn merge(
         &self,
         mask: &[Option<Material>],

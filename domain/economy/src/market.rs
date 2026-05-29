@@ -158,7 +158,6 @@ impl EconomyEngine for EconomyStore {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use types::economy::ResourceType;
 
     #[tokio::test]
     async fn wallet_transfer_ok() {
