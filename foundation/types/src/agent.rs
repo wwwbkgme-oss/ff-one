@@ -27,7 +27,10 @@ pub enum AgentKind {
     /// Cerebras inference — free tier, ultra-fast Llama 3.1/3.3.
     Cerebras,
     /// Any OpenAI-compatible endpoint.
-    Custom { name: String, endpoint: String },
+    Custom {
+        name: String,
+        endpoint: String,
+    },
 }
 
 impl std::fmt::Display for AgentKind {
@@ -43,10 +46,17 @@ impl std::fmt::Display for AgentKind {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum AgentState {
     Idle,
-    Active { current_task: String, started_at: DateTime<Utc> },
+    Active {
+        current_task: String,
+        started_at: DateTime<Utc>,
+    },
     Executing,
-    Resting { until_tick: u64 },
-    Dead { reason: String },
+    Resting {
+        until_tick: u64,
+    },
+    Dead {
+        reason: String,
+    },
 }
 
 impl Default for AgentState {
@@ -69,31 +79,31 @@ pub enum AgentCapability {
 /// Accumulated runtime statistics for one agent.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AgentStats {
-    pub blocks_mined:       u64,
-    pub blocks_placed:      u64,
-    pub code_executions:    u64,
-    pub quests_completed:   u64,
-    pub gold_earned:        u64,
-    pub xp:                 u64,
-    pub kills:              u32,
-    pub deaths:             u32,
+    pub blocks_mined: u64,
+    pub blocks_placed: u64,
+    pub code_executions: u64,
+    pub quests_completed: u64,
+    pub gold_earned: u64,
+    pub xp: u64,
+    pub kills: u32,
+    pub deaths: u32,
 }
 
 /// The canonical agent record — single source of truth for agent data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Agent {
-    pub id:           Uuid,
-    pub name:         String,
-    pub kind:         AgentKind,
-    pub state:        AgentState,
-    pub position:     Position3D,
+    pub id: Uuid,
+    pub name: String,
+    pub kind: AgentKind,
+    pub state: AgentState,
+    pub position: Position3D,
     pub capabilities: Vec<AgentCapability>,
-    pub stats:        AgentStats,
+    pub stats: AgentStats,
     /// Arbitrary config passed at spawn time.
-    pub config:       HashMap<String, serde_json::Value>,
-    pub spawned_at:   DateTime<Utc>,
-    pub last_active:  DateTime<Utc>,
-    pub epoch:        u64,
+    pub config: HashMap<String, serde_json::Value>,
+    pub spawned_at: DateTime<Utc>,
+    pub last_active: DateTime<Utc>,
+    pub epoch: u64,
 }
 
 impl Agent {

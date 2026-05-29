@@ -81,7 +81,10 @@ pub struct Block {
 }
 
 impl Block {
-    pub const AIR: Self = Self { material: Material::Air, meta: 0 };
+    pub const AIR: Self = Self {
+        material: Material::Air,
+        meta: 0,
+    };
 
     #[inline]
     pub fn new(material: Material) -> Self {

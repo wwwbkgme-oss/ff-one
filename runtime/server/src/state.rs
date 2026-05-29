@@ -5,20 +5,20 @@ use economy::EconomyStore;
 use quests::QuestStore;
 use sandbox::ProcessSandbox;
 use security::StaticAnalyser;
-use world::VoxelSimulator;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tracing::info;
 use types::world::WorldState;
+use world::VoxelSimulator;
 
 pub struct AppState {
-    pub world:     Arc<RwLock<WorldState>>,
+    pub world: Arc<RwLock<WorldState>>,
     pub simulator: Arc<RwLock<VoxelSimulator>>,
-    pub agents:    Arc<AgentManager>,
-    pub sandbox:   Arc<ProcessSandbox>,
-    pub security:  Arc<StaticAnalyser>,
-    pub economy:   Arc<EconomyStore>,
-    pub quests:    Arc<QuestStore>,
+    pub agents: Arc<AgentManager>,
+    pub sandbox: Arc<ProcessSandbox>,
+    pub security: Arc<StaticAnalyser>,
+    pub economy: Arc<EconomyStore>,
+    pub quests: Arc<QuestStore>,
     pub consensus: Arc<ConsensusStore>,
 }
 
@@ -49,13 +49,13 @@ impl AppState {
         )));
 
         Self {
-            world:     Arc::new(RwLock::new(WorldState::new(seed))),
+            world: Arc::new(RwLock::new(WorldState::new(seed))),
             simulator: Arc::new(RwLock::new(VoxelSimulator::new(seed))),
-            agents:    Arc::new(manager),
-            sandbox:   Arc::new(ProcessSandbox::new()),
-            security:  Arc::new(StaticAnalyser::new()),
-            economy:   Arc::new(EconomyStore::new()),
-            quests:    Arc::new(QuestStore::new()),
+            agents: Arc::new(manager),
+            sandbox: Arc::new(ProcessSandbox::new()),
+            security: Arc::new(StaticAnalyser::new()),
+            economy: Arc::new(EconomyStore::new()),
+            quests: Arc::new(QuestStore::new()),
             consensus: Arc::new(ConsensusStore::new()),
         }
     }

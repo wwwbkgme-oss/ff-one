@@ -3,23 +3,21 @@
 //! Pure Funktionen — kein I/O, deterministisch.
 //! Die State-Machine definiert erlaubte Übergänge.
 
-use types::agent::{AgentState, AgentCapability};
-use contracts::error::{FfError, Result};
 use chrono::Utc;
+use contracts::error::{FfError, Result};
+use types::agent::{AgentCapability, AgentState};
 
 /// Setzt einen Agent in den Active-Zustand.
 pub fn start_task(current: &AgentState, task: impl Into<String>) -> Result<AgentState> {
     match current {
         AgentState::Idle | AgentState::Resting { .. } => Ok(AgentState::Active {
             current_task: task.into(),
-            started_at:   Utc::now(),
+            started_at: Utc::now(),
         }),
-        AgentState::Dead { reason } => {
-            Err(FfError::AgentDead(reason.clone()))
-        }
+        AgentState::Dead { reason } => Err(FfError::AgentDead(reason.clone())),
         _ => Ok(AgentState::Active {
             current_task: task.into(),
-            started_at:   Utc::now(),
+            started_at: Utc::now(),
         }),
     }
 }
@@ -31,7 +29,9 @@ pub fn rest(until_tick: u64) -> AgentState {
 
 /// Markiert den Agent als tot.
 pub fn die(reason: impl Into<String>) -> AgentState {
-    AgentState::Dead { reason: reason.into() }
+    AgentState::Dead {
+        reason: reason.into(),
+    }
 }
 
 /// Prüft, ob ein Übergang von `from` nach `to` erlaubt ist.

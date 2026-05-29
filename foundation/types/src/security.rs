@@ -36,14 +36,14 @@ pub enum FindingCategory {
 /// One security issue found in agent-submitted code.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SecurityFinding {
-    pub id:           Uuid,
-    pub category:     FindingCategory,
-    pub severity:     Severity,
-    pub title:        String,
-    pub description:  String,
+    pub id: Uuid,
+    pub category: FindingCategory,
+    pub severity: Severity,
+    pub title: String,
+    pub description: String,
     pub code_snippet: Option<String>,
-    pub line_number:  Option<u32>,
-    pub detected_at:  DateTime<Utc>,
+    pub line_number: Option<u32>,
+    pub detected_at: DateTime<Utc>,
 }
 
 impl SecurityFinding {
@@ -77,12 +77,12 @@ pub enum SafetyDecision {
 /// Aggregate assessment for one submission.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SecurityAssessment {
-    pub id:                   Uuid,
-    pub submission_id:        Uuid,
-    pub findings:             Vec<SecurityFinding>,
-    pub decision:             SafetyDecision,
-    pub risk_score:           u8,
-    pub assessed_at:          DateTime<Utc>,
+    pub id: Uuid,
+    pub submission_id: Uuid,
+    pub findings: Vec<SecurityFinding>,
+    pub decision: SafetyDecision,
+    pub risk_score: u8,
+    pub assessed_at: DateTime<Utc>,
     pub analysis_duration_ms: u64,
 }
 

@@ -1,4 +1,3 @@
-
 //! Mock-Treiber für Tests und lokale Entwicklung.
 //! Kein Netzwerk — gibt vorkonfigurierte Antworten zurück.
 use async_trait::async_trait;
@@ -11,13 +10,17 @@ pub struct MockDriver {
 
 impl MockDriver {
     pub fn new(response: impl Into<String>) -> Self {
-        Self { response: response.into() }
+        Self {
+            response: response.into(),
+        }
     }
 }
 
 #[async_trait]
 impl AgentDriver for MockDriver {
-    fn name(&self) -> &str { "Mock" }
+    fn name(&self) -> &str {
+        "Mock"
+    }
     fn capabilities(&self) -> Vec<AgentCapability> {
         vec![AgentCapability::BuildAndMine, AgentCapability::ExecuteCode]
     }
@@ -25,7 +28,11 @@ impl AgentDriver for MockDriver {
         Ok(self.response.clone())
     }
     async fn generate_code(&self, _: &Agent, task: &str, lang: &str) -> Result<String> {
-        Ok(format!("# Mock: {lang} für Aufgabe: {task}\nprint('done')\n"))
+        Ok(format!(
+            "# Mock: {lang} für Aufgabe: {task}\nprint('done')\n"
+        ))
     }
-    async fn is_available(&self) -> bool { true }
+    async fn is_available(&self) -> bool {
+        true
+    }
 }

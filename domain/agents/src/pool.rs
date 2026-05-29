@@ -11,7 +11,9 @@ pub struct AgentPool {
 
 impl AgentPool {
     pub fn new() -> Self {
-        Self { queue: Mutex::new(VecDeque::new()) }
+        Self {
+            queue: Mutex::new(VecDeque::new()),
+        }
     }
 
     pub async fn push(&self, agent: Agent) {

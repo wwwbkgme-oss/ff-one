@@ -28,12 +28,17 @@ pub trait WorldSimulator: Send + Sync {
     async fn tick(&mut self, world: &mut WorldState) -> Result<Vec<WorldEvent>>;
     async fn load_chunk(&mut self, world: &mut WorldState, pos: ChunkPos) -> Result<Chunk>;
     async fn place_block(
-        &mut self, world: &mut WorldState,
-        agent_id: Uuid, pos: Position3D, block: Block,
+        &mut self,
+        world: &mut WorldState,
+        agent_id: Uuid,
+        pos: Position3D,
+        block: Block,
     ) -> Result<WorldEvent>;
     async fn mine_block(
-        &mut self, world: &mut WorldState,
-        agent_id: Uuid, pos: Position3D,
+        &mut self,
+        world: &mut WorldState,
+        agent_id: Uuid,
+        pos: Position3D,
     ) -> Result<WorldEvent>;
     fn compute_hash(&self, world: &WorldState) -> WorldHash;
 }
@@ -72,7 +77,10 @@ pub trait SandboxExecutor: Send + Sync {
 #[async_trait]
 pub trait SecurityAnalyser: Send + Sync {
     async fn assess(
-        &self, code: &str, language: &str, agent_id: Uuid,
+        &self,
+        code: &str,
+        language: &str,
+        agent_id: Uuid,
     ) -> Result<SecurityAssessment>;
     fn decide(&self, assessment: &SecurityAssessment) -> SafetyDecision;
 }
@@ -83,10 +91,21 @@ pub trait SecurityAnalyser: Send + Sync {
 /// Implementiert von `domain/economy`.
 #[async_trait]
 pub trait EconomyEngine: Send + Sync {
-    async fn list_resource(&self, seller_id: Uuid, resource: Resource, price: u64) -> Result<MarketListing>;
+    async fn list_resource(
+        &self,
+        seller_id: Uuid,
+        resource: Resource,
+        price: u64,
+    ) -> Result<MarketListing>;
     async fn purchase(&self, listing_id: Uuid, buyer_id: Uuid, quantity: u64) -> Result<()>;
     async fn get_listings(&self) -> Result<Vec<MarketListing>>;
-    async fn create_auction(&self, seller_id: Uuid, resource: Resource, start_price: u64, duration_secs: u64) -> Result<AuctionItem>;
+    async fn create_auction(
+        &self,
+        seller_id: Uuid,
+        resource: Resource,
+        start_price: u64,
+        duration_secs: u64,
+    ) -> Result<AuctionItem>;
     async fn place_bid(&self, auction_id: Uuid, bidder_id: Uuid, amount: u64) -> Result<()>;
     async fn get_auctions(&self) -> Result<Vec<AuctionItem>>;
     async fn get_wallet(&self, agent_id: Uuid) -> Result<Wallet>;

@@ -29,14 +29,14 @@ impl std::fmt::Display for PluginCapability {
 /// Parsed `Plugin.toml` manifest.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginManifest {
-    pub id:          String,
-    pub version:     String,
-    pub name:        String,
+    pub id: String,
+    pub version: String,
+    pub name: String,
     pub description: String,
-    pub provides:    Vec<PluginCapability>,
-    pub requires:    Vec<PluginCapability>,
+    pub provides: Vec<PluginCapability>,
+    pub requires: Vec<PluginCapability>,
     /// Path to the compiled shared library.
-    pub lib:         String,
+    pub lib: String,
 }
 
 /// Runtime lifecycle state of a loaded plugin.
@@ -54,12 +54,16 @@ pub enum PluginState {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginRecord {
     pub manifest: PluginManifest,
-    pub state:    PluginState,
+    pub state: PluginState,
     pub lib_path: String,
 }
 
 impl PluginRecord {
     pub fn new(manifest: PluginManifest, lib_path: impl Into<String>) -> Self {
-        Self { manifest, state: PluginState::Loaded, lib_path: lib_path.into() }
+        Self {
+            manifest,
+            state: PluginState::Loaded,
+            lib_path: lib_path.into(),
+        }
     }
 }

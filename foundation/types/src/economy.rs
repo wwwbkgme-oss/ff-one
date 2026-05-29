@@ -19,13 +19,17 @@ pub enum ResourceType {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Resource {
     pub resource_type: ResourceType,
-    pub quantity:      u64,
-    pub unit_value:    u64,
+    pub quantity: u64,
+    pub unit_value: u64,
 }
 
 impl Resource {
     pub fn new(resource_type: ResourceType, quantity: u64, unit_value: u64) -> Self {
-        Self { resource_type, quantity, unit_value }
+        Self {
+            resource_type,
+            quantity,
+            unit_value,
+        }
     }
 
     pub fn total_value(&self) -> u64 {
@@ -36,13 +40,13 @@ impl Resource {
 /// Fixed-price market listing.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MarketListing {
-    pub id:             Uuid,
-    pub seller_id:      Uuid,
-    pub resource:       Resource,
+    pub id: Uuid,
+    pub seller_id: Uuid,
+    pub resource: Resource,
     pub price_per_unit: u64,
-    pub listed_at:      DateTime<Utc>,
-    pub expires_at:     Option<DateTime<Utc>>,
-    pub active:         bool,
+    pub listed_at: DateTime<Utc>,
+    pub expires_at: Option<DateTime<Utc>>,
+    pub active: bool,
 }
 
 impl MarketListing {
@@ -62,14 +66,14 @@ impl MarketListing {
 /// Competitive-bid auction item.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AuctionItem {
-    pub id:               Uuid,
-    pub seller_id:        Uuid,
-    pub resource:         Resource,
-    pub starting_price:   u64,
-    pub current_bid:      u64,
-    pub highest_bidder:   Option<Uuid>,
-    pub ends_at:          DateTime<Utc>,
-    pub closed:           bool,
+    pub id: Uuid,
+    pub seller_id: Uuid,
+    pub resource: Resource,
+    pub starting_price: u64,
+    pub current_bid: u64,
+    pub highest_bidder: Option<Uuid>,
+    pub ends_at: DateTime<Utc>,
+    pub closed: bool,
 }
 
 impl AuctionItem {

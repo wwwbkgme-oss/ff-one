@@ -32,15 +32,15 @@ use plugin::{abi::FfPluginCtx, export_plugin};
 use tracing::{info, warn};
 
 const KEYED_PROVIDERS: &[(&str, &str)] = &[
-    ("Groq",       "GROQ_API_KEY"),
-    ("Cerebras",   "CEREBRAS_API_KEY"),
-    ("SambaNova",  "SAMBANOVA_API_KEY"),
+    ("Groq", "GROQ_API_KEY"),
+    ("Cerebras", "CEREBRAS_API_KEY"),
+    ("SambaNova", "SAMBANOVA_API_KEY"),
     ("OpenRouter", "OPENROUTER_API_KEY"),
 ];
 
 fn init(_: *const FfPluginCtx) -> i32 {
     let mut available: Vec<&str> = Vec::new();
-    let mut missing:   Vec<&str> = Vec::new();
+    let mut missing: Vec<&str> = Vec::new();
 
     for &(name, var) in KEYED_PROVIDERS {
         if std::env::var(var).is_ok() {
@@ -63,7 +63,9 @@ fn init(_: *const FfPluginCtx) -> i32 {
     0
 }
 
-fn tick(_: u64) -> i32 { 0 }
+fn tick(_: u64) -> i32 {
+    0
+}
 
 fn shutdown() -> i32 {
     info!(plugin = "plugin-free-llm", "shutdown");

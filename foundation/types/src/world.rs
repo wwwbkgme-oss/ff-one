@@ -40,16 +40,21 @@ impl std::fmt::Display for BiomeType {
 /// Blocks are stored in a flat array indexed by `x + 16*(y + 16*z)`.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Chunk {
-    pub pos:                ChunkPos,
-    pub biome:              BiomeType,
-    pub blocks:             Vec<Block>,
+    pub pos: ChunkPos,
+    pub biome: BiomeType,
+    pub blocks: Vec<Block>,
     pub last_modified_tick: u64,
 }
 
 impl Chunk {
     pub fn new(pos: ChunkPos, biome: BiomeType) -> Self {
         let vol = (CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) as usize;
-        Self { pos, biome, blocks: vec![Block::AIR; vol], last_modified_tick: 0 }
+        Self {
+            pos,
+            biome,
+            blocks: vec![Block::AIR; vol],
+            last_modified_tick: 0,
+        }
     }
 
     #[inline]
@@ -71,11 +76,11 @@ impl Chunk {
 /// Metadata for one simulation epoch.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Epoch {
-    pub number:            u64,
-    pub seed:              u64,
-    pub started_at_tick:   u64,
-    pub ended_at_tick:     Option<u64>,
-    pub dominant_faction:  Option<String>,
+    pub number: u64,
+    pub seed: u64,
+    pub started_at_tick: u64,
+    pub ended_at_tick: Option<u64>,
+    pub dominant_faction: Option<String>,
 }
 
 /// Zone-control record (0–100% per faction).
@@ -89,14 +94,14 @@ pub struct ZoneControl {
 /// Complete snapshot of the voxel universe at one tick.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WorldState {
-    pub id:           Uuid,
-    pub seed:         u64,
-    pub tick:         u64,
-    pub epoch:        Epoch,
-    pub chunks:       HashMap<String, Chunk>,
+    pub id: Uuid,
+    pub seed: u64,
+    pub tick: u64,
+    pub epoch: Epoch,
+    pub chunks: HashMap<String, Chunk>,
     pub zone_control: Vec<ZoneControl>,
     /// BLAKE3 hash of the serialised chunk data (set by the consensus layer).
-    pub state_hash:   String,
+    pub state_hash: String,
 }
 
 impl WorldState {

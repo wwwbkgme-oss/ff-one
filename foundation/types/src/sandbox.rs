@@ -23,10 +23,10 @@ impl std::fmt::Display for CodeLanguage {
 /// Resource limits enforced by the sandbox.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResourceLimits {
-    pub timeout_ms:            u64,
-    pub max_memory_bytes:      u64,
-    pub max_cpu_ms:            u64,
-    pub allow_network:         bool,
+    pub timeout_ms: u64,
+    pub max_memory_bytes: u64,
+    pub max_cpu_ms: u64,
+    pub allow_network: bool,
     pub allow_filesystem_write: bool,
 }
 
@@ -45,10 +45,10 @@ impl Default for ResourceLimits {
 /// Configuration for one sandbox instance.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SandboxConfig {
-    pub id:       Uuid,
+    pub id: Uuid,
     pub agent_id: Uuid,
     pub language: CodeLanguage,
-    pub limits:   ResourceLimits,
+    pub limits: ResourceLimits,
     pub env_vars: std::collections::HashMap<String, String>,
 }
 
@@ -78,14 +78,14 @@ pub enum ExitStatus {
 /// Result of one code-execution run.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExecutionResult {
-    pub id:                Uuid,
-    pub sandbox_id:        Uuid,
-    pub exit_status:       ExitStatus,
-    pub stdout:            String,
-    pub stderr:            String,
-    pub duration_ms:       u64,
+    pub id: Uuid,
+    pub sandbox_id: Uuid,
+    pub exit_status: ExitStatus,
+    pub stdout: String,
+    pub stderr: String,
+    pub duration_ms: u64,
     pub memory_peak_bytes: u64,
-    pub executed_at:       DateTime<Utc>,
+    pub executed_at: DateTime<Utc>,
 }
 
 impl ExecutionResult {

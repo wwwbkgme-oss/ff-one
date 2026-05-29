@@ -19,14 +19,14 @@ use uuid::Uuid;
 ///
 /// Kein I/O, kein HTTP — reine Domänenlogik.
 pub struct VoxelSimulator {
-    gen:  WorldGenerator,
+    gen: WorldGenerator,
     phys: PhysicsEngine,
 }
 
 impl VoxelSimulator {
     pub fn new(seed: u64) -> Self {
         Self {
-            gen:  WorldGenerator::new(seed, Default::default()),
+            gen: WorldGenerator::new(seed, Default::default()),
             phys: PhysicsEngine::new(),
         }
     }
@@ -43,7 +43,8 @@ impl WorldSimulator for VoxelSimulator {
         if world.get_chunk(&pos).is_none() {
             world.insert_chunk(self.gen.generate_chunk(pos));
         }
-        world.get_chunk(&pos)
+        world
+            .get_chunk(&pos)
             .cloned()
             .ok_or_else(|| FfError::ChunkNotFound(WorldState::chunk_key(&pos)))
     }
@@ -55,18 +56,24 @@ impl WorldSimulator for VoxelSimulator {
         pos: Position3D,
         block: Block,
     ) -> Result<WorldEvent> {
-        let cp   = pos.chunk_pos(CHUNK_SIZE);
-        let lp   = pos.local_pos(CHUNK_SIZE);
+        let cp = pos.chunk_pos(CHUNK_SIZE);
+        let lp = pos.local_pos(CHUNK_SIZE);
         let tick = world.tick;
 
         if world.get_chunk(&cp).is_none() {
             world.insert_chunk(self.gen.generate_chunk(cp));
         }
-        world.get_chunk_mut(&cp)
+        world
+            .get_chunk_mut(&cp)
             .ok_or_else(|| FfError::ChunkNotFound(WorldState::chunk_key(&cp)))
             .map(|c| {
                 c.set(lp.x as usize, lp.y as usize, lp.z as usize, block, tick);
-                WorldEvent::BlockPlaced { agent_id, position: pos, block, tick }
+                WorldEvent::BlockPlaced {
+                    agent_id,
+                    position: pos,
+                    block,
+                    tick,
+                }
             })
     }
 
@@ -76,15 +83,27 @@ impl WorldSimulator for VoxelSimulator {
         agent_id: Uuid,
         pos: Position3D,
     ) -> Result<WorldEvent> {
-        let cp   = pos.chunk_pos(CHUNK_SIZE);
-        let lp   = pos.local_pos(CHUNK_SIZE);
+        let cp = pos.chunk_pos(CHUNK_SIZE);
+        let lp = pos.local_pos(CHUNK_SIZE);
         let tick = world.tick;
 
-        let chunk = world.get_chunk_mut(&cp)
+        let chunk = world
+            .get_chunk_mut(&cp)
             .ok_or_else(|| FfError::ChunkNotFound(WorldState::chunk_key(&cp)))?;
         let was = *chunk.get(lp.x as usize, lp.y as usize, lp.z as usize);
-        chunk.set(lp.x as usize, lp.y as usize, lp.z as usize, Block::AIR, tick);
-        Ok(WorldEvent::BlockMined { agent_id, position: pos, was, tick })
+        chunk.set(
+            lp.x as usize,
+            lp.y as usize,
+            lp.z as usize,
+            Block::AIR,
+            tick,
+        );
+        Ok(WorldEvent::BlockMined {
+            agent_id,
+            position: pos,
+            was,
+            tick,
+        })
     }
 
     fn compute_hash(&self, world: &WorldState) -> WorldHash {
@@ -100,19 +119,19 @@ impl WorldSimulator for VoxelSimulator {
                 h.update(key.as_bytes());
                 for b in &chunk.blocks {
                     let id: u16 = match b.material {
-                        types::block::Material::Air      => 0,
-                        types::block::Material::Stone    => 1,
-                        types::block::Material::Dirt     => 2,
-                        types::block::Material::Grass    => 3,
-                        types::block::Material::Sand     => 6,
-                        types::block::Material::Water    => 8,
-                        types::block::Material::Lava     => 9,
-                        types::block::Material::Iron     => 10,
-                        types::block::Material::Gold     => 11,
-                        types::block::Material::Diamond  => 12,
+                        types::block::Material::Air => 0,
+                        types::block::Material::Stone => 1,
+                        types::block::Material::Dirt => 2,
+                        types::block::Material::Grass => 3,
+                        types::block::Material::Sand => 6,
+                        types::block::Material::Water => 8,
+                        types::block::Material::Lava => 9,
+                        types::block::Material::Iron => 10,
+                        types::block::Material::Gold => 11,
+                        types::block::Material::Diamond => 12,
                         types::block::Material::Obsidian => 13,
                         types::block::Material::Custom(x) => x,
-                        _                                => 99,
+                        _ => 99,
                     };
                     h.update(&id.to_le_bytes());
                     h.update(&[b.meta]);

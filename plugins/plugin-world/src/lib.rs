@@ -7,7 +7,9 @@ fn init(_: *const FfPluginCtx) -> i32 {
     0
 }
 fn tick(t: u64) -> i32 {
-    if t % 200 == 0 { debug!(plugin = "plugin-world", tick = t, "tick"); }
+    if t % 200 == 0 {
+        debug!(plugin = "plugin-world", tick = t, "tick");
+    }
     0
 }
 fn shutdown() -> i32 {

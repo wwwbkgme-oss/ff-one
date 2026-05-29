@@ -1,21 +1,21 @@
-
 use async_trait::async_trait;
 use chrono::Utc;
-use contracts::{error::{FfError, Result}, traits::SandboxExecutor};
+use contracts::{
+    error::{FfError, Result},
+    traits::SandboxExecutor,
+};
 use std::{collections::HashMap, sync::Arc};
 use tempfile::TempDir;
 use tokio::{process::Command, sync::RwLock, time};
 use tracing::info;
-use types::sandbox::{
-    CodeLanguage, ExecutionResult, ExitStatus, SandboxConfig, SandboxState,
-};
+use types::sandbox::{CodeLanguage, ExecutionResult, ExitStatus, SandboxConfig, SandboxState};
 use uuid::Uuid;
 
 struct Inst {
-    config:  SandboxConfig,
-    state:   SandboxState,
-    _wd:     TempDir,
-    snaps:   HashMap<String, Vec<u8>>,
+    config: SandboxConfig,
+    state: SandboxState,
+    _wd: TempDir,
+    snaps: HashMap<String, Vec<u8>>,
 }
 
 /// Prozessbasierter Sandbox-Executor.
@@ -28,32 +28,36 @@ pub struct ProcessSandbox {
 
 impl ProcessSandbox {
     pub fn new() -> Self {
-        Self { instances: Arc::new(RwLock::new(HashMap::new())) }
+        Self {
+            instances: Arc::new(RwLock::new(HashMap::new())),
+        }
     }
 
     fn interpreter(lang: &CodeLanguage) -> &'static str {
         match lang {
-            CodeLanguage::Python     => "python3",
+            CodeLanguage::Python => "python3",
             CodeLanguage::JavaScript => "node",
-            CodeLanguage::Rust       => "rustc",
-            CodeLanguage::Bash       => "bash",
-            CodeLanguage::Lua        => "lua",
+            CodeLanguage::Rust => "rustc",
+            CodeLanguage::Bash => "bash",
+            CodeLanguage::Lua => "lua",
         }
     }
 
     fn extension(lang: &CodeLanguage) -> &'static str {
         match lang {
-            CodeLanguage::Python     => "py",
+            CodeLanguage::Python => "py",
             CodeLanguage::JavaScript => "js",
-            CodeLanguage::Rust       => "rs",
-            CodeLanguage::Bash       => "sh",
-            CodeLanguage::Lua        => "lua",
+            CodeLanguage::Rust => "rs",
+            CodeLanguage::Bash => "sh",
+            CodeLanguage::Lua => "lua",
         }
     }
 }
 
 impl Default for ProcessSandbox {
-    fn default() -> Self { Self::new() }
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 #[async_trait]
@@ -61,9 +65,15 @@ impl SandboxExecutor for ProcessSandbox {
     async fn create(&self, config: SandboxConfig) -> Result<Uuid> {
         let id = config.id;
         let wd = tempfile::tempdir().map_err(FfError::Io)?;
-        self.instances.write().await.insert(id, Inst {
-            config, state: SandboxState::Ready, _wd: wd, snaps: HashMap::new(),
-        });
+        self.instances.write().await.insert(
+            id,
+            Inst {
+                config,
+                state: SandboxState::Ready,
+                _wd: wd,
+                snaps: HashMap::new(),
+            },
+        );
         info!(sandbox = %id, "sandbox created");
         Ok(id)
     }
@@ -72,60 +82,71 @@ impl SandboxExecutor for ProcessSandbox {
         // Konfiguration lesen, bevor der mutable Borrow beginnt.
         let (lang, timeout_ms, env_vars) = {
             let ins = self.instances.read().await;
-            let i   = ins.get(&id).ok_or_else(|| FfError::SandboxNotFound(id.to_string()))?;
-            (i.config.language.clone(), i.config.limits.timeout_ms, i.config.env_vars.clone())
+            let i = ins
+                .get(&id)
+                .ok_or_else(|| FfError::SandboxNotFound(id.to_string()))?;
+            (
+                i.config.language.clone(),
+                i.config.limits.timeout_ms,
+                i.config.env_vars.clone(),
+            )
         };
 
-        { // Zustand → Running
+        {
+            // Zustand → Running
             if let Some(i) = self.instances.write().await.get_mut(&id) {
                 i.state = SandboxState::Running;
             }
         }
 
         // Code in temporäre Datei schreiben.
-        let code_path = std::env::temp_dir()
-            .join(format!("{}.{}", id, Self::extension(&lang)));
-        tokio::fs::write(&code_path, code).await.map_err(FfError::Io)?;
+        let code_path = std::env::temp_dir().join(format!("{}.{}", id, Self::extension(&lang)));
+        tokio::fs::write(&code_path, code)
+            .await
+            .map_err(FfError::Io)?;
 
         // Prozess spawnen und auf Timeout achten.
-        let start  = std::time::Instant::now();
+        let start = std::time::Instant::now();
         let interp = Self::interpreter(&lang);
         let mut cmd = Command::new(interp);
         cmd.arg(&code_path).env_clear().envs(&env_vars);
 
-        let outcome = time::timeout(
-            std::time::Duration::from_millis(timeout_ms),
-            cmd.output(),
-        ).await;
+        let outcome =
+            time::timeout(std::time::Duration::from_millis(timeout_ms), cmd.output()).await;
 
         let duration_ms = start.elapsed().as_millis() as u64;
         let _ = tokio::fs::remove_file(&code_path).await;
 
         let result = match outcome {
             Err(_) => ExecutionResult {
-                id:                Uuid::new_v4(), sandbox_id: id,
-                exit_status:       ExitStatus::Timeout,
-                stdout:            String::new(),
-                stderr:            format!("Timeout nach {timeout_ms} ms"),
-                duration_ms,       memory_peak_bytes: 0,
-                executed_at:       Utc::now(),
+                id: Uuid::new_v4(),
+                sandbox_id: id,
+                exit_status: ExitStatus::Timeout,
+                stdout: String::new(),
+                stderr: format!("Timeout nach {timeout_ms} ms"),
+                duration_ms,
+                memory_peak_bytes: 0,
+                executed_at: Utc::now(),
             },
             Ok(Err(e)) => return Err(FfError::ExecutionFailed(e.to_string())),
             Ok(Ok(out)) => ExecutionResult {
-                id:          Uuid::new_v4(), sandbox_id: id,
+                id: Uuid::new_v4(),
+                sandbox_id: id,
                 exit_status: if out.status.success() {
                     ExitStatus::Success
                 } else {
                     ExitStatus::NonZero(out.status.code().unwrap_or(-1))
                 },
-                stdout:       String::from_utf8_lossy(&out.stdout).into_owned(),
-                stderr:       String::from_utf8_lossy(&out.stderr).into_owned(),
-                duration_ms,  memory_peak_bytes: 0,
-                executed_at:  Utc::now(),
+                stdout: String::from_utf8_lossy(&out.stdout).into_owned(),
+                stderr: String::from_utf8_lossy(&out.stderr).into_owned(),
+                duration_ms,
+                memory_peak_bytes: 0,
+                executed_at: Utc::now(),
             },
         };
 
-        { // Zustand → Ready
+        {
+            // Zustand → Ready
             if let Some(i) = self.instances.write().await.get_mut(&id) {
                 i.state = SandboxState::Ready;
             }
@@ -134,13 +155,19 @@ impl SandboxExecutor for ProcessSandbox {
     }
 
     async fn state(&self, id: Uuid) -> Result<SandboxState> {
-        self.instances.read().await.get(&id)
+        self.instances
+            .read()
+            .await
+            .get(&id)
             .map(|i| i.state.clone())
             .ok_or_else(|| FfError::SandboxNotFound(id.to_string()))
     }
 
     async fn destroy(&self, id: Uuid) -> Result<()> {
-        self.instances.write().await.remove(&id)
+        self.instances
+            .write()
+            .await
+            .remove(&id)
             .map(|_| ())
             .ok_or_else(|| FfError::SandboxNotFound(id.to_string()))
     }
@@ -148,15 +175,20 @@ impl SandboxExecutor for ProcessSandbox {
     async fn snapshot(&self, id: Uuid) -> Result<String> {
         let snap_id = Uuid::new_v4().to_string();
         let mut ins = self.instances.write().await;
-        let i = ins.get_mut(&id).ok_or_else(|| FfError::SandboxNotFound(id.to_string()))?;
+        let i = ins
+            .get_mut(&id)
+            .ok_or_else(|| FfError::SandboxNotFound(id.to_string()))?;
         i.snaps.insert(snap_id.clone(), vec![]);
         Ok(snap_id)
     }
 
     async fn restore(&self, id: Uuid, snap: &str) -> Result<()> {
         let ins = self.instances.read().await;
-        let i = ins.get(&id).ok_or_else(|| FfError::SandboxNotFound(id.to_string()))?;
-        i.snaps.get(snap)
+        let i = ins
+            .get(&id)
+            .ok_or_else(|| FfError::SandboxNotFound(id.to_string()))?;
+        i.snaps
+            .get(snap)
             .ok_or_else(|| FfError::Other(format!("Snapshot {snap} nicht gefunden")))?;
         Ok(())
     }
@@ -167,9 +199,9 @@ mod tests {
     use super::*;
 
     async fn make_sandbox(lang: CodeLanguage) -> (ProcessSandbox, Uuid) {
-        let sb   = ProcessSandbox::new();
-        let cfg  = SandboxConfig::new(Uuid::new_v4(), lang);
-        let id   = sb.create(cfg).await.unwrap();
+        let sb = ProcessSandbox::new();
+        let cfg = SandboxConfig::new(Uuid::new_v4(), lang);
+        let id = sb.create(cfg).await.unwrap();
         (sb, id)
     }
 

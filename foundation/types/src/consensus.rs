@@ -28,12 +28,12 @@ impl std::fmt::Display for WorldHash {
 /// One agent's attestation of a world state.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WitnessRecord {
-    pub id:           Uuid,
-    pub agent_id:     Uuid,
-    pub tick:         u64,
-    pub world_hash:   WorldHash,
+    pub id: Uuid,
+    pub agent_id: Uuid,
+    pub tick: u64,
+    pub world_hash: WorldHash,
     pub witnessed_at: DateTime<Utc>,
-    pub signature:    Option<String>,
+    pub signature: Option<String>,
 }
 
 impl WitnessRecord {
@@ -55,7 +55,11 @@ pub enum ConsensusResult {
     /// All witnesses agree.
     Unanimous(WorldHash),
     /// Supermajority (≥ ⅔) agrees.
-    Majority { hash: WorldHash, votes: u32, total: u32 },
+    Majority {
+        hash: WorldHash,
+        votes: u32,
+        total: u32,
+    },
     /// No supermajority reached.
     Disputed,
 }
@@ -63,12 +67,12 @@ pub enum ConsensusResult {
 /// State of an ongoing consensus round for one tick.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ConsensusRound {
-    pub tick:               u64,
-    pub witnesses:          Vec<WitnessRecord>,
+    pub tick: u64,
+    pub witnesses: Vec<WitnessRecord>,
     pub required_witnesses: u32,
-    pub result:             Option<ConsensusResult>,
-    pub started_at:         DateTime<Utc>,
-    pub finalised_at:       Option<DateTime<Utc>>,
+    pub result: Option<ConsensusResult>,
+    pub started_at: DateTime<Utc>,
+    pub finalised_at: Option<DateTime<Utc>>,
 }
 
 impl ConsensusRound {

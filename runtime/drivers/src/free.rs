@@ -25,7 +25,12 @@ use tracing::info;
 /// Groq Cloud — free API key at <https://console.groq.com>.
 /// Default model: `llama-3.1-8b-instant` (fast, free tier).
 pub fn groq(api_key: impl Into<String>) -> OpenAiDriver {
-    OpenAiDriver::new("Groq", "https://api.groq.com/openai/v1", api_key, "llama-3.1-8b-instant")
+    OpenAiDriver::new(
+        "Groq",
+        "https://api.groq.com/openai/v1",
+        api_key,
+        "llama-3.1-8b-instant",
+    )
 }
 
 // ── SambaNova ────────────────────────────────────────────────────────────────
@@ -34,7 +39,12 @@ pub fn groq(api_key: impl Into<String>) -> OpenAiDriver {
 /// Sign up at <https://cloud.sambanova.ai>.
 /// Default model: `Meta-Llama-3.3-70B-Instruct`.
 pub fn sambanova(api_key: impl Into<String>) -> OpenAiDriver {
-    OpenAiDriver::new("SambaNova", "https://api.sambanova.ai/v1", api_key, "Meta-Llama-3.3-70B-Instruct")
+    OpenAiDriver::new(
+        "SambaNova",
+        "https://api.sambanova.ai/v1",
+        api_key,
+        "Meta-Llama-3.3-70B-Instruct",
+    )
 }
 
 // ── Ollama (local) ───────────────────────────────────────────────────────────
@@ -43,7 +53,8 @@ pub fn sambanova(api_key: impl Into<String>) -> OpenAiDriver {
 /// Install Ollama at <https://ollama.com>, then `ollama pull <model>`.
 /// Override URL with `OLLAMA_BASE_URL`, model with `OLLAMA_MODEL`.
 pub fn ollama_default() -> OpenAiDriver {
-    let base  = std::env::var("OLLAMA_BASE_URL").unwrap_or_else(|_| "http://localhost:11434/v1".into());
+    let base =
+        std::env::var("OLLAMA_BASE_URL").unwrap_or_else(|_| "http://localhost:11434/v1".into());
     let model = std::env::var("OLLAMA_MODEL").unwrap_or_else(|_| "llama3.2".into());
     // Ollama's OpenAI-compat endpoint ignores the bearer token but requires a non-empty value.
     OpenAiDriver::new("Ollama", base, "ollama", model)
@@ -54,7 +65,12 @@ pub fn ollama_default() -> OpenAiDriver {
 /// OpenRouter — free account at <https://openrouter.ai>.
 /// Models with `:free` suffix cost $0. Default: `meta-llama/llama-3.1-8b-instruct:free`.
 pub fn openrouter(api_key: impl Into<String>) -> OpenAiDriver {
-    OpenAiDriver::new("OpenRouter", "https://openrouter.ai/api/v1", api_key, "meta-llama/llama-3.1-8b-instruct:free")
+    OpenAiDriver::new(
+        "OpenRouter",
+        "https://openrouter.ai/api/v1",
+        api_key,
+        "meta-llama/llama-3.1-8b-instruct:free",
+    )
 }
 
 // ── Cerebras ─────────────────────────────────────────────────────────────────
@@ -63,7 +79,12 @@ pub fn openrouter(api_key: impl Into<String>) -> OpenAiDriver {
 /// Sign up at <https://cloud.cerebras.ai>.
 /// Default model: `llama3.1-8b`.
 pub fn cerebras(api_key: impl Into<String>) -> OpenAiDriver {
-    OpenAiDriver::new("Cerebras", "https://api.cerebras.ai/v1", api_key, "llama3.1-8b")
+    OpenAiDriver::new(
+        "Cerebras",
+        "https://api.cerebras.ai/v1",
+        api_key,
+        "llama3.1-8b",
+    )
 }
 
 // ── Auto-loader ──────────────────────────────────────────────────────────────

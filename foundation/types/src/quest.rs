@@ -20,37 +20,55 @@ pub enum QuestStatus {
 /// What the quest requires the agent to do.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum QuestObjective {
-    MineBlocks   { material: String, count: u32 },
-    BuildStructure { template_id: String },
-    SolveChallenge { challenge: String, expected_hash: String },
-    Defeat       { target: String, count: u32 },
-    Explore      { target: String, radius: u32 },
-    Earn         { amount: u64 },
-    Freeform     { description: String },
+    MineBlocks {
+        material: String,
+        count: u32,
+    },
+    BuildStructure {
+        template_id: String,
+    },
+    SolveChallenge {
+        challenge: String,
+        expected_hash: String,
+    },
+    Defeat {
+        target: String,
+        count: u32,
+    },
+    Explore {
+        target: String,
+        radius: u32,
+    },
+    Earn {
+        amount: u64,
+    },
+    Freeform {
+        description: String,
+    },
 }
 
 /// Reward granted on completion.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct QuestReward {
-    pub gold:  u64,
-    pub xp:    u64,
+    pub gold: u64,
+    pub xp: u64,
     pub items: Vec<String>,
 }
 
 /// Canonical quest record.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Quest {
-    pub id:             Uuid,
-    pub title:          String,
-    pub description:    String,
-    pub objective:      QuestObjective,
-    pub reward:         QuestReward,
-    pub difficulty:     u8,
-    pub status:         QuestStatus,
+    pub id: Uuid,
+    pub title: String,
+    pub description: String,
+    pub objective: QuestObjective,
+    pub reward: QuestReward,
+    pub difficulty: u8,
+    pub status: QuestStatus,
     pub eligible_kinds: Vec<AgentKind>,
-    pub accepted_by:    Option<Uuid>,
-    pub created_at:     DateTime<Utc>,
-    pub expires_at:     Option<DateTime<Utc>>,
+    pub accepted_by: Option<Uuid>,
+    pub created_at: DateTime<Utc>,
+    pub expires_at: Option<DateTime<Utc>>,
 }
 
 impl Quest {

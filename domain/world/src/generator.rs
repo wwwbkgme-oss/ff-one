@@ -23,16 +23,20 @@ pub struct GeneratorConfig {
 
 impl Default for GeneratorConfig {
     fn default() -> Self {
-        Self { terrain_amplitude: 40.0, sea_level: 32, bedrock_depth: 4 }
+        Self {
+            terrain_amplitude: 40.0,
+            sea_level: 32,
+            bedrock_depth: 4,
+        }
     }
 }
 
 /// Zustandsloser Terrain-Generator — deterministisch für gegebenes `seed`.
 pub struct WorldGenerator {
-    config:   GeneratorConfig,
-    height:   Turbulence<Perlin, Perlin>,
-    biome:    Perlin,
-    cave:     Perlin,
+    config: GeneratorConfig,
+    height: Turbulence<Perlin, Perlin>,
+    biome: Perlin,
+    cave: Perlin,
 }
 
 impl WorldGenerator {
@@ -42,7 +46,12 @@ impl WorldGenerator {
         let height = Turbulence::<Perlin, Perlin>::new(base)
             .set_frequency(1.0)
             .set_power(0.5);
-        Self { config, height, biome: Perlin::new(s.wrapping_add(1)), cave: Perlin::new(s.wrapping_add(2)) }
+        Self {
+            config,
+            height,
+            biome: Perlin::new(s.wrapping_add(1)),
+            cave: Perlin::new(s.wrapping_add(2)),
+        }
     }
 
     /// Generiert einen einzelnen Chunk deterministisch.
@@ -87,17 +96,26 @@ impl WorldGenerator {
     }
 
     fn is_cave(&self, wx: i64, wy: i64, wz: i64) -> bool {
-        self.cave.get([wx as f64 / 32.0, wy as f64 / 16.0, wz as f64 / 32.0]) > 0.6
+        self.cave
+            .get([wx as f64 / 32.0, wy as f64 / 16.0, wz as f64 / 32.0])
+            > 0.6
     }
 
     fn sample_biome(&self, cx: i64, cz: i64) -> BiomeType {
         let v = self.biome.get([cx as f64 / 8.0, cz as f64 / 8.0]);
-        if v < -0.6      { BiomeType::Ocean }
-        else if v < -0.3 { BiomeType::Desert }
-        else if v < 0.0  { BiomeType::Plains }
-        else if v < 0.3  { BiomeType::Forest }
-        else if v < 0.6  { BiomeType::Mountains }
-        else             { BiomeType::Tundra }
+        if v < -0.6 {
+            BiomeType::Ocean
+        } else if v < -0.3 {
+            BiomeType::Desert
+        } else if v < 0.0 {
+            BiomeType::Plains
+        } else if v < 0.3 {
+            BiomeType::Forest
+        } else if v < 0.6 {
+            BiomeType::Mountains
+        } else {
+            BiomeType::Tundra
+        }
     }
 
     fn block_at(&self, wx: i64, wy: i64, wz: i64, surf: i64, biome: BiomeType) -> Block {
@@ -116,10 +134,10 @@ impl WorldGenerator {
         }
         if wy == surf {
             return match biome {
-                BiomeType::Desert        => Block::new(Material::Sand),
-                BiomeType::Ocean         => Block::new(Material::Gravel),
+                BiomeType::Desert => Block::new(Material::Sand),
+                BiomeType::Ocean => Block::new(Material::Gravel),
                 BiomeType::VolcanicWastes => Block::new(Material::Obsidian),
-                _                        => Block::new(Material::Grass),
+                _ => Block::new(Material::Grass),
             };
         }
         if wy >= surf - 3 {
@@ -130,10 +148,20 @@ impl WorldGenerator {
             };
         }
         // Erzadern
-        let ore = self.cave.get([wx as f64 / 8.0 + 100.0, wy as f64 / 8.0, wz as f64 / 8.0 + 100.0]);
-        if wy < 16 && ore > 0.70 { return Block::new(Material::Diamond); }
-        if wy < 32 && ore > 0.65 { return Block::new(Material::Gold); }
-        if wy < 48 && ore > 0.60 { return Block::new(Material::Iron); }
+        let ore = self.cave.get([
+            wx as f64 / 8.0 + 100.0,
+            wy as f64 / 8.0,
+            wz as f64 / 8.0 + 100.0,
+        ]);
+        if wy < 16 && ore > 0.70 {
+            return Block::new(Material::Diamond);
+        }
+        if wy < 32 && ore > 0.65 {
+            return Block::new(Material::Gold);
+        }
+        if wy < 48 && ore > 0.60 {
+            return Block::new(Material::Iron);
+        }
         Block::new(Material::Stone)
     }
 }

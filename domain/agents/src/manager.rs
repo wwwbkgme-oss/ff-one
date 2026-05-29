@@ -6,12 +6,12 @@
 //! **BKG:** kein HTTP hier — nur Trait-Aufruf über `dyn AgentDriver`.
 
 use crate::{prompt, state as st};
+use chrono::Utc;
 use contracts::{
     error::{FfError, Result},
     traits::AgentDriver,
 };
 use std::{collections::HashMap, sync::Arc};
-use chrono::Utc;
 use tokio::sync::RwLock;
 use tracing::info;
 use types::{
@@ -23,7 +23,7 @@ use uuid::Uuid;
 
 /// Verwaltet alle Agent-Instanzen der aktuellen Welt.
 pub struct AgentManager {
-    agents:  Arc<RwLock<HashMap<Uuid, Agent>>>,
+    agents: Arc<RwLock<HashMap<Uuid, Agent>>>,
     /// Registrierte KI-Treiber nach Backend-Name (z. B. "Claude", "OpenCode").
     drivers: HashMap<String, Arc<dyn AgentDriver>>,
 }
@@ -31,7 +31,7 @@ pub struct AgentManager {
 impl AgentManager {
     pub fn new() -> Self {
         Self {
-            agents:  Arc::new(RwLock::new(HashMap::new())),
+            agents: Arc::new(RwLock::new(HashMap::new())),
             drivers: HashMap::new(),
         }
     }
@@ -45,9 +45,9 @@ impl AgentManager {
     /// Spawnt einen neuen Agent an `pos`.
     pub async fn spawn(
         &self,
-        name:    impl Into<String>,
-        kind:    AgentKind,
-        pos:     Position3D,
+        name: impl Into<String>,
+        kind: AgentKind,
+        pos: Position3D,
     ) -> Result<Agent> {
         let mut agent = Agent::new(name, kind);
         agent.position = pos;
@@ -59,7 +59,8 @@ impl AgentManager {
     /// Gibt einen Agent zurück.
     pub async fn get(&self, id: Uuid) -> Result<Agent> {
         self.agents
-            .read().await
+            .read()
+            .await
             .get(&id)
             .cloned()
             .ok_or_else(|| FfError::AgentNotFound(id.to_string()))
@@ -90,7 +91,8 @@ impl AgentManager {
             return Err(FfError::AgentDead(agent.name.clone()));
         }
         let driver_name = agent.kind.to_string();
-        let driver = self.drivers
+        let driver = self
+            .drivers
             .get(&driver_name)
             .ok_or_else(|| FfError::Other(format!("Kein Treiber für {driver_name}")))?;
 
@@ -102,18 +104,17 @@ impl AgentManager {
         let mut agents = self.agents.write().await;
         if let Some(a) = agents.get_mut(&id) {
             a.last_active = Utc::now();
-            a.state       = new_state;
+            a.state = new_state;
         }
         Ok(response)
     }
 
     /// Generiert Code für eine Aufgabe.
-    pub async fn generate_code(
-        &self, id: Uuid, task: &str, language: &str,
-    ) -> Result<String> {
+    pub async fn generate_code(&self, id: Uuid, task: &str, language: &str) -> Result<String> {
         let agent = self.get(id).await?;
         let driver_name = agent.kind.to_string();
-        let driver = self.drivers
+        let driver = self
+            .drivers
             .get(&driver_name)
             .ok_or_else(|| FfError::Other(format!("Kein Treiber für {driver_name}")))?;
         driver.generate_code(&agent, task, language).await
