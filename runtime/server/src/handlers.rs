@@ -47,8 +47,25 @@ pub async fn tick_world(
     let mut w = s.world.write().await;
     let mut sim = s.simulator.write().await;
     let evs = sim.tick(&mut w).await.map_err(err)?;
-    w.state_hash = sim.compute_hash(&w).0;
-    Ok(Json(serde_json::json!({"tick":w.tick,"events":evs.len()})))
+    let hash_val = sim.compute_hash(&w);
+    w.state_hash = hash_val.0.clone();
+
+    // ── EventLog: alle emittierten Events persistieren ─────────────────────
+    let tick = w.tick;
+    let hash_u64: u64 = u64::from_str_radix(
+        hash_val.0.trim_start_matches("0x"), 16,
+    ).unwrap_or(0);
+    for ev in &evs {
+        if let Err(e) = s.event_log.append(tick, hash_u64, ev.clone()) {
+            tracing::warn!(error = %e, "tick_world: EventLog append fehlgeschlagen");
+        }
+    }
+
+    Ok(Json(serde_json::json!({
+        "tick":   tick,
+        "hash":   hash_val.0,
+        "events": evs.len(),
+    })))
 }
 
 #[derive(Deserialize)]
