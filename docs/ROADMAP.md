@@ -283,8 +283,8 @@ serve traffic behind a load balancer with consistent reads.
 
 | Item | Phase | Status |
 |---|---|---|
-| OS-level sandbox isolation | 1 | open |
-| Persistent event log | 1 | open |
+| OS-level sandbox isolation | 1 | open — seccomp-bpf geplant |
+| **Persistent event log** | 1 | **done** ✓ — JSON Lines EventLog, Replay beim Start |
 | Real sandbox snapshot / restore | 1 | open |
 | **CI/CD pipeline** | 1 | **done** ✓ |
 | Real-time event streaming | 2 | open |
@@ -304,6 +304,8 @@ serve traffic behind a load balancer with consistent reads.
 | Item | Status |
 |---|---|
 | Free-tier LLM drivers (Groq, Cerebras, SambaNova, OpenRouter, Ollama) | done ✓ |
+| FORGE_CORE_SYNC.md — Compliance-Status SYNC_CONTRACT v0.1 | done ✓ |
+| `WorldTick` + `WorldSnapshot` kanonische Typen | done ✓ |
 | `AgentKind::Free(FreeProvider)` grouping — no provider explosion | done ✓ |
 | `GET /drivers` endpoint | done ✓ |
 | Driver / Plugin boundary spec (`docs/DRIVER_PLUGIN_BOUNDARY.md`) | done ✓ |
