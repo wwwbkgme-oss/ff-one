@@ -25,7 +25,20 @@ pub async fn tick_world(State(s):State<Arc<AppState>>)->Result<Json<serde_json::
 #[derive(Deserialize)] pub struct SpawnReq{pub name:String,pub kind:Option<String>,pub x:Option<i64>,pub y:Option<i64>,pub z:Option<i64>}
 #[derive(Serialize)] pub struct AgentResp{pub id:Uuid,pub name:String,pub kind:String,pub position:[i64;3],pub level:u64}
 pub async fn spawn_agent(State(s):State<Arc<AppState>>,Json(req):Json<SpawnReq>)->Result<Json<AgentResp>,(StatusCode,String)>{
-    let kind=match req.kind.as_deref(){Some("opencode")=>AgentKind::OpenCode,Some("codex")=>AgentKind::Codex,Some("amp")=>AgentKind::Amp,_=>AgentKind::Claude};
+    let kind = match req.kind.as_deref() {
+        Some("opencode")   => AgentKind::OpenCode,
+        Some("codex")      => AgentKind::Codex,
+        Some("amp")        => AgentKind::Amp,
+        Some("pi")         => AgentKind::Pi,
+        Some("cursor")     => AgentKind::Cursor,
+        // Free-tier providers
+        Some("groq")       => AgentKind::Groq,
+        Some("sambanova")  => AgentKind::SambaNova,
+        Some("ollama")     => AgentKind::Ollama,
+        Some("openrouter") => AgentKind::OpenRouter,
+        Some("cerebras")   => AgentKind::Cerebras,
+        _                  => AgentKind::Claude,
+    };
     let pos=Position3D::new(req.x.unwrap_or(0),req.y.unwrap_or(64),req.z.unwrap_or(0));
     let a=s.agents.spawn(req.name,kind,pos).await.map_err(err)?;
     Ok(Json(AgentResp{id:a.id,name:a.name.clone(),kind:a.kind.to_string(),position:[a.position.x,a.position.y,a.position.z],level:a.level()}))
