@@ -15,6 +15,17 @@ pub enum AgentKind {
     Amp,
     Pi,
     Cursor,
+    // ── Free / open providers (no payment required) ───────────────────────
+    /// Groq Cloud — free API key, fast Llama 3 / Gemma 2 inference.
+    Groq,
+    /// SambaNova Cloud — free tier, Llama 3.3 / DeepSeek V3.
+    SambaNova,
+    /// Local Ollama instance — entirely free, runs on your hardware.
+    Ollama,
+    /// OpenRouter free models (`:free` suffix in model id).
+    OpenRouter,
+    /// Cerebras inference — free tier, ultra-fast Llama 3.1/3.3.
+    Cerebras,
     /// Any OpenAI-compatible endpoint.
     Custom { name: String, endpoint: String },
 }
