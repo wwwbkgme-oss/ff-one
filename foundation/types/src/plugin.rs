@@ -67,3 +67,12 @@ impl PluginRecord {
         }
     }
 }
+
+// ── ForgeFabrik Sync Contract ─────────────────────────────────────────────────
+
+/// Canonical federation name for a loaded plugin record.
+///
+/// `ForgeFabrikPlugin` is the name required by the Unified Sync Contract.
+/// `PluginRecord` is the ff-one-internal name; they are identical.
+/// New code should prefer `ForgeFabrikPlugin`.
+pub type ForgeFabrikPlugin = PluginRecord;
