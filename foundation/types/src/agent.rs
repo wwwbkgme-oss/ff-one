@@ -6,27 +6,61 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
+/// Free-tier LLM providers — no credit card required.
+///
+/// All implement the `AgentDriver` trait via OpenAI-compatible HTTP endpoints.
+/// Grouped here so `AgentKind` does not accumulate one variant per provider
+/// ("provider explosion" antipattern).
+///
+/// **Layer:** `foundation/types` — pure data, no I/O.
+/// Actual HTTP clients live in `runtime/drivers/free.rs`.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum FreeProvider {
+    /// Groq Cloud — fast Llama 3 / Gemma 2 inference. Env: `GROQ_API_KEY`
+    Groq,
+    /// SambaNova Cloud — Llama 3.3 / DeepSeek V3. Env: `SAMBANOVA_API_KEY`
+    SambaNova,
+    /// Local Ollama — runs on your hardware, no key needed.
+    Ollama,
+    /// OpenRouter — free models carry a `:free` suffix. Env: `OPENROUTER_API_KEY`
+    OpenRouter,
+    /// Cerebras — ultra-fast RDU inference. Env: `CEREBRAS_API_KEY`
+    Cerebras,
+}
+
+impl std::fmt::Display for FreeProvider {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Must match the string returned by the corresponding AgentDriver::name().
+        let s = match self {
+            Self::Groq => "Groq",
+            Self::SambaNova => "SambaNova",
+            Self::Ollama => "Ollama",
+            Self::OpenRouter => "OpenRouter",
+            Self::Cerebras => "Cerebras",
+        };
+        write!(f, "{s}")
+    }
+}
+
 /// Which AI backend drives this agent.
+///
+/// Variants represent **agent semantics**, not infrastructure config.
+/// Adding a new free-tier provider means adding a `FreeProvider` variant,
+/// not a top-level `AgentKind` variant — this keeps the enum stable.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum AgentKind {
+    // ── Paid / cloud backends ─────────────────────────────────────────────
     Claude,
     OpenCode,
     Codex,
     Amp,
     Pi,
     Cursor,
-    // ── Free / open providers (no payment required) ───────────────────────
-    /// Groq Cloud — free API key, fast Llama 3 / Gemma 2 inference.
-    Groq,
-    /// SambaNova Cloud — free tier, Llama 3.3 / DeepSeek V3.
-    SambaNova,
-    /// Local Ollama instance — entirely free, runs on your hardware.
-    Ollama,
-    /// OpenRouter free models (`:free` suffix in model id).
-    OpenRouter,
-    /// Cerebras inference — free tier, ultra-fast Llama 3.1/3.3.
-    Cerebras,
-    /// Any OpenAI-compatible endpoint.
+    // ── Free-tier backends (grouped to prevent provider explosion) ────────
+    /// A free-tier provider — see [`FreeProvider`].
+    Free(FreeProvider),
+    // ── Escape hatch ─────────────────────────────────────────────────────
+    /// Any OpenAI-compatible endpoint not covered above.
     Custom {
         name: String,
         endpoint: String,
@@ -36,6 +70,7 @@ pub enum AgentKind {
 impl std::fmt::Display for AgentKind {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::Free(p) => write!(f, "{p}"),
             Self::Custom { name, .. } => write!(f, "{name}"),
             _ => write!(f, "{self:?}"),
         }

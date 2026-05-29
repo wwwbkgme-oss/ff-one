@@ -10,7 +10,7 @@ use contracts::traits::{
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 use types::{
-    agent::AgentKind,
+    agent::{AgentKind, FreeProvider},
     position::Position3D,
     sandbox::{CodeLanguage, SandboxConfig},
 };
@@ -77,12 +77,12 @@ pub async fn spawn_agent(
         Some("amp") => AgentKind::Amp,
         Some("pi") => AgentKind::Pi,
         Some("cursor") => AgentKind::Cursor,
-        // Free-tier providers
-        Some("groq") => AgentKind::Groq,
-        Some("sambanova") => AgentKind::SambaNova,
-        Some("ollama") => AgentKind::Ollama,
-        Some("openrouter") => AgentKind::OpenRouter,
-        Some("cerebras") => AgentKind::Cerebras,
+        // Free-tier backends — grouped under AgentKind::Free(FreeProvider)
+        Some("groq") => AgentKind::Free(FreeProvider::Groq),
+        Some("sambanova") => AgentKind::Free(FreeProvider::SambaNova),
+        Some("ollama") => AgentKind::Free(FreeProvider::Ollama),
+        Some("openrouter") => AgentKind::Free(FreeProvider::OpenRouter),
+        Some("cerebras") => AgentKind::Free(FreeProvider::Cerebras),
         _ => AgentKind::Claude,
     };
     let pos = Position3D::new(req.x.unwrap_or(0), req.y.unwrap_or(64), req.z.unwrap_or(0));
