@@ -1,0 +1,15 @@
+[package]
+name        = "plugin-free-llm"
+description = "ForgeFabrik plugin — free-tier LLM provider registry (Groq, SambaNova, Ollama, OpenRouter, Cerebras)."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# cdylib: loaded at runtime by PluginHostImpl via libloading.
+# rlib: allows test crates to depend on this.
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+plugin  = { workspace = true }
+tracing = { workspace = true }

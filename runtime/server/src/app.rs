@@ -15,6 +15,7 @@ pub fn build_app(state:Arc<AppState>)->Router{
         .route("/quests",get(list_quests))
         .route("/quests/{id}/accept",post(accept_quest))
         .route("/economy/market",get(get_market))
+        .route("/drivers",get(list_drivers))
         .with_state(state)
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::permissive())

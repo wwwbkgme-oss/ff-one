@@ -15,7 +15,7 @@ use chrono::Utc;
 use tokio::sync::RwLock;
 use tracing::info;
 use types::{
-    agent::{Agent, AgentKind, AgentState},
+    agent::{Agent, AgentKind},
     position::Position3D,
     world::WorldState,
 };
@@ -117,6 +117,15 @@ impl AgentManager {
             .get(&driver_name)
             .ok_or_else(|| FfError::Other(format!("Kein Treiber für {driver_name}")))?;
         driver.generate_code(&agent, task, language).await
+    }
+
+    /// Gibt die Namen aller registrierten Treiber zurück.
+    ///
+    /// Nützlich für `GET /drivers` — zeigt welche Backends verfügbar sind.
+    pub fn driver_names(&self) -> Vec<String> {
+        let mut names: Vec<String> = self.drivers.keys().cloned().collect();
+        names.sort();
+        names
     }
 }
 

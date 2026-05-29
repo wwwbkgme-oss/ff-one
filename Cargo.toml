@@ -31,6 +31,7 @@ members = [
     "plugins/plugin-world",
     "plugins/plugin-gm",
     "plugins/plugin-economy",
+    "plugins/plugin-free-llm",
 ]
 resolver = "2"
 
