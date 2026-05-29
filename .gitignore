@@ -1,5 +1,6 @@
 /target
-Cargo.lock
+# Cargo.lock is intentionally tracked — this workspace produces a binary (cli).
+# Library-only workspaces omit it; binary workspaces must commit it.
 *.so
 *.dylib
 *.dll
