@@ -15,7 +15,7 @@ use chrono::Utc;
 use tokio::sync::RwLock;
 use tracing::info;
 use types::{
-    agent::{Agent, AgentKind, AgentState},
+    agent::{Agent, AgentKind},
     position::Position3D,
     world::WorldState,
 };

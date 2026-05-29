@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use contracts::{error::{FfError, Result}, traits::ConsensusCoordinator};
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::RwLock;
-use types::consensus::{ConsensusResult, ConsensusRound, WitnessRecord, WorldHash};
+use types::consensus::{ConsensusRound, WitnessRecord, WorldHash};
 use uuid::Uuid;
 
 /// In-Memory-Konsens-Koordinator.
