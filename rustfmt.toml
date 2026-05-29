@@ -1,0 +1,16 @@
+# ForgeFabrik — rustfmt configuration (stable channel)
+#
+# Run:   cargo fmt --all
+# Check: cargo fmt --all -- --check  (used in CI)
+#
+# Only stable options are listed here. Options that require nightly
+# (imports_granularity, group_imports, trailing_comma, wrap_comments, …)
+# are intentionally omitted so stable CI does not emit warnings.
+
+edition = "2021"
+
+# Maximum line width before rustfmt wraps (stable, default is 100).
+max_width = 100
+
+# Use field init shorthand  { x, y }  instead of  { x: x, y: y }  (stable).
+use_field_init_shorthand = true
