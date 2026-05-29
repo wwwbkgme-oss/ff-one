@@ -198,6 +198,17 @@ GET  /economy/market                  Markt-Listings und Auktionen
 cargo test --workspace
 ```
 
+**Production-Ready Features:**
+
+| Feature | Status |
+|---|---|
+| Persistent EventLog (JSON Lines) | ✓ — jeder `POST /world/tick` persistiert Events |
+| Echter Sandbox Snapshot/Restore (tar.gz) | ✓ — Phase 1.3 abgeschlossen |
+| CI/CD (GitHub Actions) | ✓ |
+| Free-LLM-Drivers (8 Provider) | ✓ |
+| BLAKE3-Konsens | ✓ |
+| Plugin-System (ff_plugin_init/tick/shutdown) | ✓ |
+
 **14 Tests — 0 Fehler:**
 
 | Crate | Tests |

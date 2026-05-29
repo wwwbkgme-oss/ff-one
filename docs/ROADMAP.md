@@ -285,7 +285,7 @@ serve traffic behind a load balancer with consistent reads.
 |---|---|---|
 | OS-level sandbox isolation | 1 | open — seccomp-bpf geplant |
 | **Persistent event log** | 1 | **done** ✓ — JSON Lines EventLog, Replay beim Start |
-| Real sandbox snapshot / restore | 1 | open |
+| **Real sandbox snapshot / restore** | 1 | **done** ✓ — tar.gz in-memory, restore via stdin |
 | **CI/CD pipeline** | 1 | **done** ✓ |
 | Real-time event streaming | 2 | open |
 | Epoch scheduler | 2 | open |
