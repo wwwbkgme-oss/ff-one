@@ -1,6 +1,6 @@
 //! World state, chunks, biomes, and epochs.
 
-use crate::{block::Block, position::ChunkPos};
+use crate::{block::Block, position::ChunkPos, tick::WorldTick};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
@@ -89,6 +89,42 @@ pub struct ZoneControl {
     pub zone_name: String,
     /// Faction name → ownership percentage.
     pub control: HashMap<String, u8>,
+}
+
+/// Replay-safe snapshot of world state at a given tick.
+///
+/// Semantically identical to `forge-core::WorldSnapshot`.
+/// The `state_hash` is BLAKE3 over sorted, deterministic chunk data.
+///
+/// Invariant: `replay(events_up_to(tick)) == snapshot.state_hash`
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct WorldSnapshot {
+    pub id: Uuid,
+    pub tick: WorldTick,
+    /// BLAKE3 hex digest of deterministic world state.
+    pub state_hash: String,
+    pub label: Option<String>,
+}
+
+impl WorldSnapshot {
+    pub fn new(tick: WorldTick, state_hash: impl Into<String>) -> Self {
+        Self {
+            id: Uuid::new_v4(),
+            tick,
+            state_hash: state_hash.into(),
+            label: None,
+        }
+    }
+
+    /// From a `WorldState`'s current hash (convenience).
+    pub fn from_world_state(world: &WorldState) -> Self {
+        Self::new(WorldTick::from_u64(world.tick), world.state_hash.clone())
+    }
+
+    /// Two snapshots are semantically equal when tick + hash match.
+    pub fn semantically_eq(&self, other: &Self) -> bool {
+        self.tick == other.tick && self.state_hash == other.state_hash
+    }
 }
 
 /// Complete snapshot of the voxel universe at one tick.

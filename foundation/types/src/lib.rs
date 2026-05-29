@@ -20,6 +20,7 @@ pub mod position;
 pub mod quest;
 pub mod sandbox;
 pub mod security;
+pub mod tick;
 pub mod world;
 
 pub use agent::*;
@@ -31,4 +32,5 @@ pub use position::*;
 pub use quest::*;
 pub use sandbox::*;
 pub use security::*;
+pub use tick::{WorldTick, DAY_LENGTH_TICKS};
 pub use world::*;
