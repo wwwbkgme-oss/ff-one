@@ -1,8 +1,26 @@
 [package]
 name="server"
+description="ForgeFabrik runtime — Axum HTTP REST API."
 version.workspace=true
 edition.workspace=true
 license.workspace=true
 [dependencies]
 types={workspace=true}
 contracts={workspace=true}
+world={workspace=true}
+agents={workspace=true}
+sandbox={workspace=true}
+security={workspace=true}
+economy={workspace=true}
+quests={workspace=true}
+consensus={workspace=true}
+drivers={workspace=true}
+serde={workspace=true}
+serde_json={workspace=true}
+uuid={workspace=true}
+tokio={workspace=true}
+axum={workspace=true}
+tower={workspace=true}
+tower-http={workspace=true}
+tracing={workspace=true}
+anyhow={workspace=true}
