@@ -74,7 +74,9 @@ Domain kennt nur Foundation. Foundation kennt niemanden über sich.
 | `plugin-world` | Reality — Voxel-Weltsimulation |
 | `plugin-gm` | GameMaster — Quest-Generierung |
 | `plugin-economy` | Economy — Ressourcen-Wirtschaft |
-| `plugin-free-llm` | FreeLLM — kostenlose LLM-Provider (Groq, SambaNova, Ollama, OpenRouter, Cerebras) |
+
+> Plugins erweitern **Domain-Verhalten**. LLM-Treiber sind **Infrastruktur** und leben in
+> `runtime/drivers/`. Siehe [`docs/DRIVER_PLUGIN_BOUNDARY.md`](docs/DRIVER_PLUGIN_BOUNDARY.md).
 
 ---
 
@@ -143,6 +145,8 @@ GET  /agents                          Alle Agents auflisten
 POST /agents                          Agent spawnen  { name, kind, x?, y?, z? }
 POST /agents/:id/command              Natürlichsprachiger Befehl  { command }
 
+GET  /drivers                         Registrierte AgentDrivers auflisten
+
 POST /sandbox                         Sandbox erstellen  { agent_id, language? }
 POST /sandbox/:id/execute             Code ausführen  { code }
 
@@ -175,8 +179,11 @@ GET  /economy/market                  Markt-Listings und Auktionen
 | `openrouter` | OpenRouter | `OPENROUTER_API_KEY` | Viele `:free`-Modelle |
 | `ollama` | Ollama (lokal) | — | Beliebige lokal gezogene Modelle |
 
-> API-Keys direkt als Env-Var setzen oder in einer `.env`-Datei ablegen.
+> API-Keys direkt als Env-Var setzen — siehe [`.env.example`](.env.example) als Template.
 > Ollama braucht keine Credentials — einfach `ollama pull llama3.2` lokal ausführen.
+>
+> Intern werden alle freien Backends als `AgentKind::Free(FreeProvider::Groq)` etc. codiert
+> (kein Provider-Explosion im Enum). Neuen Provider hinzufügen: [`docs/DRIVER_PLUGIN_BOUNDARY.md`](docs/DRIVER_PLUGIN_BOUNDARY.md).
 
 ---
 
