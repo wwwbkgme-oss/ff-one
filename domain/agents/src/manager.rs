@@ -118,6 +118,15 @@ impl AgentManager {
             .ok_or_else(|| FfError::Other(format!("Kein Treiber für {driver_name}")))?;
         driver.generate_code(&agent, task, language).await
     }
+
+    /// Gibt die Namen aller registrierten Treiber zurück.
+    ///
+    /// Nützlich für `GET /drivers` — zeigt welche Backends verfügbar sind.
+    pub fn driver_names(&self) -> Vec<String> {
+        let mut names: Vec<String> = self.drivers.keys().cloned().collect();
+        names.sort();
+        names
+    }
 }
 
 impl Default for AgentManager {

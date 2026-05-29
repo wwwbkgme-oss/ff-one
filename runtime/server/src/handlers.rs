@@ -92,3 +92,12 @@ pub async fn get_market(State(s):State<Arc<AppState>>)->Result<Json<serde_json::
     let as_=s.economy.get_auctions().await.map_err(err)?;
     Ok(Json(serde_json::json!({"listings":ls.len(),"auctions":as_.len()})))
 }
+
+/// GET /drivers — list all registered AgentDrivers.
+///
+/// Returns the sorted names of every driver registered at startup.
+/// Use the `kind` field when spawning an agent to select a driver.
+pub async fn list_drivers(State(s):State<Arc<AppState>>)->Json<serde_json::Value>{
+    let names = s.agents.driver_names();
+    Json(serde_json::json!({"count": names.len(), "drivers": names}))
+}
