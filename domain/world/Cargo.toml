@@ -1,8 +1,22 @@
 [package]
-name="world"
-version.workspace=true
-edition.workspace=true
-license.workspace=true
+name        = "world"
+description = "ForgeFabrik domain — deterministic voxel engine: terrain, physics, greedy mesh."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# BKG rule: domain darf nur foundation + externe Crates importieren.
+# Kein HTTP, keine I/O, kein Plugin-Hosting.
 [dependencies]
-types={workspace=true}
-core={workspace=true}
+types       = { workspace = true }
+contracts = { workspace = true }
+serde       = { workspace = true }
+uuid        = { workspace = true }
+blake3      = { workspace = true }
+noise       = { workspace = true }
+rand        = { workspace = true }
+rayon       = { workspace = true }
+thiserror   = { workspace = true }
+tracing     = { workspace = true }
+tokio       = { workspace = true }
+async-trait = { workspace = true }

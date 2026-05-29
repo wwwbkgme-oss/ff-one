@@ -4,7 +4,7 @@ members = [
     # Fundamentale Bausteine: Typen, Traits, Fehler, Events.
     # Kennt keine höheren Layer.
     "foundation/types",
-    "foundation/core",
+    "foundation/contracts",
 
     # ── domain ─────────────────────────────────────────────────────────────
     # Fachdomänen: one concept = one crate.
@@ -83,7 +83,7 @@ regex              = "1"
 
 # ── Internal crates (BKG layer paths, no product prefix) ──────────────────
 types      = { path = "foundation/types" }
-core       = { path = "foundation/core" }
+contracts = { path = "foundation/contracts" }
 world      = { path = "domain/world" }
 agents     = { path = "domain/agents" }
 economy    = { path = "domain/economy" }
