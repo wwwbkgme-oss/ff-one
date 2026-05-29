@@ -1,0 +1,45 @@
+# ForgeFabrik — docker-compose
+#
+# Start everything:  docker compose up
+# Build image:       docker compose build
+# Shell into server: docker compose exec server bash
+
+services:
+  server:
+    build: .
+    image: forgefabrik:latest
+    container_name: forgefabrik-server
+    ports:
+      - "8080:8080"
+    environment:
+      # ── Paid backends (set in .env or here) ────────────────────────────────
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      # ── Free-tier backends ─────────────────────────────────────────────────
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - CEREBRAS_API_KEY=${CEREBRAS_API_KEY:-}
+      - SAMBANOVA_API_KEY=${SAMBANOVA_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      # ── Ollama: point to the host-machine Ollama service ───────────────────
+      # On Linux: host-gateway resolves to the Docker bridge IP
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.2}
+      # ── Logging ────────────────────────────────────────────────────────────
+      - RUST_LOG=${RUST_LOG:-forgefabrik=info}
+    extra_hosts:
+      # Allow the container to reach Ollama running on the host
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    volumes:
+      # Persist nothing by default — all state is in-memory.
+      # Uncomment when persistence layer (roadmap 2.3) is implemented:
+      # - forgefabrik-data:/home/forgefabrik/data
+
+# volumes:
+#   forgefabrik-data:
