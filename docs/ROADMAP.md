@@ -286,7 +286,7 @@ serve traffic behind a load balancer with consistent reads.
 | OS-level sandbox isolation | 1 | open |
 | Persistent event log | 1 | open |
 | Real sandbox snapshot / restore | 1 | open |
-| CI/CD pipeline | 1 | open |
+| **CI/CD pipeline** | 1 | **done** ✓ |
 | Real-time event streaming | 2 | open |
 | Epoch scheduler | 2 | open |
 | WorldState persistence | 2 | open |
@@ -296,5 +296,16 @@ serve traffic behind a load balancer with consistent reads.
 | Plugin implementations | 3 | open |
 | Multi-agent prompt context | 3 | open |
 | Distributed consensus | 4 | open |
-| Containerisation | 4 | open |
+| **Containerisation** | 4 | **done** ✓ — Dockerfile + docker-compose.yml |
 | Horizontal scaling | 4 | open |
+
+**Additional items delivered outside the original plan:**
+
+| Item | Status |
+|---|---|
+| Free-tier LLM drivers (Groq, Cerebras, SambaNova, OpenRouter, Ollama) | done ✓ |
+| `AgentKind::Free(FreeProvider)` grouping — no provider explosion | done ✓ |
+| `GET /drivers` endpoint | done ✓ |
+| Driver / Plugin boundary spec (`docs/DRIVER_PLUGIN_BOUNDARY.md`) | done ✓ |
+| `AgentManager::driver_names()` | done ✓ |
+| `AppState` wires all drivers from env vars at startup | done ✓ |
