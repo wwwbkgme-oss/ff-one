@@ -1,4 +1,8 @@
-# ForgeFabrik — Architecture
+# ForgeFabrik — Architecture (ff-one)
+
+> **Canonical reference implementation** for the ForgeFabrik federated system.  
+> Plugin ABI, AgentKind grouping, and BLAKE3 consensus originate here.  
+> forge-core kernel: [forge-core/SYNC_CONTRACT.md](https://github.com/wwwbkgme-oss/forge-core/blob/main/SYNC_CONTRACT.md)
 
 This document describes the internal structure of ForgeFabrik: how the layers relate,
 how events flow, and how each subsystem works. Read this before adding a new crate or trait.
