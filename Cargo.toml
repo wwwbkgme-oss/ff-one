@@ -1,21 +1,36 @@
 [workspace]
 members = [
-    "crates/ff-types",
-    "crates/ff-core",
-    "crates/ff-world",
-    "crates/ff-plugin",
-    "crates/ff-agents",
-    "crates/ff-sandbox",
-    "crates/ff-security",
-    "crates/ff-economy",
-    "crates/ff-quests",
-    "crates/ff-consensus",
-    "crates/ff-server",
-    "crates/ff-cli",
-    "plugins/ff-plugin-agents",
-    "plugins/ff-plugin-world",
-    "plugins/ff-plugin-gm",
-    "plugins/ff-plugin-economy",
+    # ── foundation ─────────────────────────────────────────────────────────
+    # Fundamentale Bausteine: Typen, Traits, Fehler, Events.
+    # Kennt keine höheren Layer.
+    "foundation/types",
+    "foundation/core",
+
+    # ── domain ─────────────────────────────────────────────────────────────
+    # Fachdomänen: one concept = one crate.
+    # Kommuniziert nur über Events/Commands/Contracts.
+    "domain/world",
+    "domain/agents",
+    "domain/economy",
+    "domain/quests",
+    "domain/security",
+    "domain/consensus",
+
+    # ── runtime ────────────────────────────────────────────────────────────
+    # Außenwelt-Brücke: HTTP, I/O, Plugins, CLI.
+    # Orchestriert — besitzt keine Businesswahrheit.
+    "runtime/drivers",
+    "runtime/sandbox",
+    "runtime/plugin",
+    "runtime/server",
+    "runtime/cli",
+
+    # ── plugins ────────────────────────────────────────────────────────────
+    # cdylib-Pakete — zur Laufzeit vom Plugin-Host geladen.
+    "plugins/plugin-agents",
+    "plugins/plugin-world",
+    "plugins/plugin-gm",
+    "plugins/plugin-economy",
 ]
 resolver = "2"
 
@@ -28,56 +43,57 @@ description  = "ForgeFabrik — AI agents mine, fight, and build in a shared vox
 
 [workspace.dependencies]
 # Async runtime
-tokio        = { version = "1", features = ["full"] }
+tokio              = { version = "1", features = ["full"] }
 # Serialisation
-serde        = { version = "1", features = ["derive"] }
-serde_json   = "1"
-toml         = "0.8"
+serde              = { version = "1", features = ["derive"] }
+serde_json         = "1"
+toml               = "0.8"
 # Error handling
-thiserror    = "2"
-anyhow       = "1"
-# Network
-reqwest      = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls"] }
-axum         = { version = "0.8", features = ["macros"] }
-tower        = { version = "0.5", features = ["full"] }
-tower-http   = { version = "0.6", features = ["cors", "trace"] }
+thiserror          = "2"
+anyhow             = "1"
+# Network / API
+reqwest            = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls"] }
+axum               = { version = "0.8", features = ["macros"] }
+tower              = { version = "0.5", features = ["full"] }
+tower-http         = { version = "0.6", features = ["cors", "trace"] }
 # CLI / TUI
-clap         = { version = "4", features = ["derive", "env"] }
-ratatui      = "0.29"
-crossterm    = "0.28"
+clap               = { version = "4", features = ["derive", "env"] }
+ratatui            = "0.29"
+crossterm          = "0.28"
 # Async utilities
-async-trait  = "0.1"
-futures      = "0.3"
+async-trait        = "0.1"
+futures            = "0.3"
 # IDs + hashing
-uuid         = { version = "1", features = ["v4", "serde"] }
-blake3       = "1"
+uuid               = { version = "1", features = ["v4", "serde"] }
+blake3             = "1"
 # Time
-chrono       = { version = "0.4", features = ["serde"] }
+chrono             = { version = "0.4", features = ["serde"] }
 # Observability
-tracing      = "0.1"
+tracing            = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
 # World generation
-noise        = "0.9"
-rand         = "0.8"
-rayon        = "1"
+noise              = "0.9"
+rand               = "0.8"
+rayon              = "1"
 # Dynamic loading
-libloading   = "0.8"
+libloading         = "0.8"
 # Utilities
-tempfile     = "3"
-regex        = "1"
+tempfile           = "3"
+regex              = "1"
 
-# Internal crates
-ff-types     = { path = "crates/ff-types" }
-ff-core      = { path = "crates/ff-core" }
-ff-world     = { path = "crates/ff-world" }
-ff-plugin    = { path = "crates/ff-plugin" }
-ff-agents    = { path = "crates/ff-agents" }
-ff-sandbox   = { path = "crates/ff-sandbox" }
-ff-security  = { path = "crates/ff-security" }
-ff-economy   = { path = "crates/ff-economy" }
-ff-quests    = { path = "crates/ff-quests" }
-ff-consensus = { path = "crates/ff-consensus" }
-ff-server    = { path = "crates/ff-server" }
+# ── Internal crates (BKG layer paths, no product prefix) ──────────────────
+types      = { path = "foundation/types" }
+core       = { path = "foundation/core" }
+world      = { path = "domain/world" }
+agents     = { path = "domain/agents" }
+economy    = { path = "domain/economy" }
+quests     = { path = "domain/quests" }
+security   = { path = "domain/security" }
+consensus  = { path = "domain/consensus" }
+drivers    = { path = "runtime/drivers" }
+sandbox    = { path = "runtime/sandbox" }
+plugin     = { path = "runtime/plugin" }
+server     = { path = "runtime/server" }
 
 [profile.release]
 opt-level     = 3

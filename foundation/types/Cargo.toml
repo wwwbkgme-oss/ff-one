@@ -1,6 +1,6 @@
 [package]
-name        = "ff-types"
-description = "ForgeFabrik — pure domain types. Zero logic, zero traits."
+name        = "types"
+description = "ForgeFabrik foundation — pure domain types. No logic, no traits, no I/O."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
