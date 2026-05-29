@@ -46,7 +46,7 @@ domain concepts but are compiled separately and dynamically linked.
 
 | Crate | Key exports |
 |---|---|
-| `types` | `Agent`, `AgentState`, `AgentKind`, `Block`, `Material`, `WorldState`, `Chunk`, `Position3D`, `Quest`, `Wallet`, `SecurityAssessment`, `ConsensusRound`, … |
+| `types` | `Agent`, `AgentState`, `AgentKind`, `FreeProvider`, `Block`, `Material`, `WorldState`, `Chunk`, `Position3D`, `Quest`, `Wallet`, `SecurityAssessment`, `ConsensusRound`, … |
 | `contracts` | `FfError`, `Result<T>`, `WorldEvent`, all trait definitions |
 
 ### domain/
@@ -64,7 +64,7 @@ domain concepts but are compiled separately and dynamically linked.
 
 | Crate | Key exports | Allowed I/O |
 |---|---|---|
-| `drivers` | `ClaudeDriver`, `OpenAiDriver`, `MockDriver` | HTTPS to AI APIs |
+| `drivers` | `ClaudeDriver`, `OpenAiDriver`, `MockDriver`, `load_free_drivers()` | HTTPS to AI APIs |
 | `sandbox` | `ProcessSandbox` | Spawning child processes |
 | `plugin` | `PluginHostImpl`, `PluginManifest` parser | `dlopen` / `libloading` |
 | `server` | `build_app`, `AppState` | TCP/HTTP via Axum |
@@ -129,7 +129,7 @@ Traits are defined in `foundation/contracts`. Implementations live in the layer 
 | Trait | Implemented by | Layer |
 |---|---|---|
 | `WorldSimulator` | `VoxelSimulator` | `domain/world` |
-| `AgentDriver` | `ClaudeDriver`, `OpenAiDriver`, `MockDriver` | `runtime/drivers` |
+| `AgentDriver` | `ClaudeDriver`, `OpenAiDriver`, `MockDriver` + free-tier drivers (Groq, SambaNova, Ollama, OpenRouter, Cerebras) via `load_free_drivers()` | `runtime/drivers` |
 | `SandboxExecutor` | `ProcessSandbox` | `runtime/sandbox` |
 | `SecurityAnalyser` | `StaticAnalyser` | `domain/security` |
 | `EconomyEngine` | `MarketEngine` | `domain/economy` |
@@ -164,6 +164,26 @@ stateDiagram-v2
 State transitions are pure functions in `domain/agents/src/state.rs`. The manager calls
 them and emits `AgentStateChanged` events. The `AgentDriver` trait (implemented in
 `runtime/drivers`) is called only when the agent is in `Active` state.
+
+### AgentKind and FreeProvider
+
+`AgentKind` encodes **agent semantics**, not infrastructure config. Free-tier backends
+are all grouped under one variant to prevent provider explosion:
+
+```rust
+AgentKind::Free(FreeProvider::Groq)       // kind string: "groq"
+AgentKind::Free(FreeProvider::Ollama)     // kind string: "ollama"
+AgentKind::Free(FreeProvider::Cerebras)   // kind string: "cerebras"
+// …
+```
+
+`FreeProvider::fmt()` must exactly match the string returned by the corresponding
+`AgentDriver::name()` — this is how `AgentManager::command()` resolves the driver
+at runtime. Adding a new free provider requires only a `FreeProvider` variant, not a
+new top-level `AgentKind` variant.
+
+See [`docs/DRIVER_PLUGIN_BOUNDARY.md`](docs/DRIVER_PLUGIN_BOUNDARY.md) for the full
+driver vs. plugin boundary specification and the reference procedure.
 
 ### Agent capabilities
 
